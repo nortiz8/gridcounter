@@ -1,0 +1,135 @@
+<!DOCTYPE HTML> 
+<meta charset="UTF-8">
+<html> 
+  
+<head> 
+    <title> 
+        Test
+    </title> 
+    <style> 
+        #canvas {
+            position: relative;
+            background-color: #fff;
+            background-size: 60px 60px;
+            background-image:
+                linear-gradient(to right, grey 1px, transparent 1px),
+                linear-gradient(to bottom, grey 1px, transparent 1px);
+            margin: 1em auto;
+        }
+        .ball {
+            background-color: black;
+            position: absolute;
+            display: inline-block;
+            border-radius: 50%;
+        }
+        body{
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+        }
+        #correct-count{
+            display: none;
+        }
+    </style> 
+  
+</head> 
+  
+<body> 
+    <div id="canvas"></div>
+    <div class="info">
+        <div class="your-count">
+            <p>Your Count: <span id="count"></span></p>
+        </div>
+        <div id="correct-count">
+            <p>Number of moving: <span id="moving"></span></p>
+            <p>Number of still: <span id="still"></span></p>
+        </div>
+        <button onclick="showCount()">Show Count</button>
+    </div>
+        <script> 
+            var canvas = {
+                element: document.getElementById('canvas'),
+                width: 601,
+                height: 601,
+                initialize: function() {
+                    this.element.style.width = this.width + 'px';
+                    this.element.style.height = this.height + 'px';
+                    document.body.appendChild(this.element);
+                }
+            };
+            
+            var Ball = {
+                create: function(color, dx, dy) {
+                    var newBall = Object.create(this);
+                    newBall.dx = dx;
+                    newBall.dy = dy;
+                    newBall.width = 10;
+                    newBall.height = 10;
+                    newBall.element = document.createElement('div');
+                    newBall.element.style.backgroundColor = color;
+                    newBall.element.style.width = newBall.width + 'px';
+                    newBall.element.style.height = newBall.height + 'px';
+                    newBall.element.className += ' ball';
+                    newBall.width = parseInt(newBall.element.style.width);
+                    newBall.height = parseInt(newBall.element.style.height);
+                    canvas.element.appendChild(newBall.element);
+                    return newBall;
+                },
+                moveTo: function(x, y) {
+                    this.element.style.left = x + 'px';
+                    this.element.style.top = y + 'px';
+                },
+                changeDirectionIfNecessary: function(x, y) {
+                    if (x < 0 || x > canvas.width - this.width) {
+                        this.dx = -this.dx;
+                    }
+                    if (y < 0 || y > canvas.height - this.height) {
+                        this.dy = -this.dy;
+                    }
+                },
+                draw: function(x, y) {
+                    this.moveTo(x, y);
+                    var ball = this;
+                    setTimeout(function() {
+                        ball.changeDirectionIfNecessary(x, y);
+                        ball.draw(x + ball.dx, y + ball.dy);
+                    }, 1000 / 60);
+                }
+            };
+            let count = 0
+            const countDisplay = document.getElementById("count")
+            const movingDisplay = document.getElementById("moving")
+            const stillDisplay = document.getElementById("still")
+            canvas.initialize();
+            const movingNumber = Math.floor((Math.random() * 100) + 20)
+            const stillNumber = Math.floor((Math.random() * 30) + 20)
+            movingDisplay.innerHTML = movingNumber
+            stillDisplay.innerHTML = stillNumber
+            for(i = 0; i < movingNumber; i++){
+                let num1 = Math.floor((Math.random() * 5) + .5)
+                let num2 = Math.floor((Math.random() * 5) + .5)
+                let num3 = Math.floor((Math.random() * 580) + 1)
+                let num4 = Math.floor((Math.random() * 580) + 1)
+                const ball = Ball.create('#cb7af0', num1, num2 );
+                ball.draw(num3, num4)
+            }
+            for(i = 0; i < stillNumber; i++){
+                let num3 = Math.floor((Math.random() * 580) + 1)
+                let num4 = Math.floor((Math.random() * 580) + 1)
+                const ball = Ball.create('#cb7af0', 0, 0 );
+                ball.draw(num3, num4)
+            }
+            document.addEventListener('keyup', (e)=>{
+                if(e.code === "Space"){
+                    count += 1;
+                    countDisplay.innerHTML = count
+                }
+            })
+            function showCount() {
+                const countContainer = document.getElementById('correct-count')
+                countContainer.style.display = "block"
+            }
+        </script> 
+</body> 
+  
+</html> 
